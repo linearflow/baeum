@@ -1,0 +1,1 @@
+[Hello, AWS CDK!](https://awslabs.github.io/aws-cdk/getting-started.html)

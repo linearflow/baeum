@@ -1,0 +1,19 @@
+{
+  "name": "getting-started",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
+  "devDependencies": {
+    "prettier": "^1.14.2",
+    "typescript": "^3.0.3"
+  },
+  "dependencies": {
+    "@aws-cdk/aws-s3": "^0.8.2",
+    "@aws-cdk/cdk": "^0.8.2",
+    "@types/node": "^10.9.4"
+  }
+}
