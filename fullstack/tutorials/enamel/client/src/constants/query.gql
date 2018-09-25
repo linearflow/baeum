@@ -24,3 +24,24 @@ mutation Login($email: String!, $password: String!) {
     }
   }
 }
+
+query GetTeam {
+  getTeam {
+    id
+    name
+  }
+}
+
+fragment FolderFields on Folder {
+  id
+  name
+  parent
+  description
+  shareWith
+}
+query GetFolders($parent: String) {
+  getFolders(parent: $parent) { ...FolderFields }
+}
+query GetFolder($id: String!) {
+  getFolder(id: $id) { ...FolderFields }
+}

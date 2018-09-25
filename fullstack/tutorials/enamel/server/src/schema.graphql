@@ -1,7 +1,23 @@
 scalar Date
+scalar JSON
 
 type Query {
-  test: String
+  getTeam: Team
+  getFolders(parent: String): [Folder]
+  getFolder(id: String!): Folder
+}
+
+type Team {
+  id: String
+  name: String
+}
+
+type Folder {
+  id: String
+  name: String
+  parent: String
+  description: String
+  shareWith: [JSON]
 }
 
 type Mutation {

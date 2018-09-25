@@ -42,6 +42,8 @@ export default {
   },
   methods: {
     async signup() {
+      this.$apollo.provider.clients.defaultClient.cache.reset();
+
       const { firstname, lastname, password } = this.form;
       // 유효성 검사
       if (!(firstname && lastname && password)) {
@@ -64,8 +66,8 @@ export default {
           const token = signup.token;
           // 성공하면 유저/토큰 정보를 로컬스토리지에 저장
           this.saveUserData(id, token);
-          // this.$router.push({name: 'workspace'})
-          console.log("success!"); // For now just print
+          this.$router.push({ name: "workspace" });
+          // console.log("success!"); // For now just print
         })
         .catch(error => {
           this.error = "Something went wrong";

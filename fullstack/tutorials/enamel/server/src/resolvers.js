@@ -2,8 +2,11 @@ const { GraphQLScalarType } = require("graphql");
 const bcrypt = require("bcrypt");
 const moment = require("moment");
 const jwt = require("jsonwebtoken");
+const mongoose = require('mongoose')
+const ObjectId = mongoose.Types.ObjectId
 
-const { User, Team } = require("./models");
+const { User, Team, Folder, Group } = require("./models");
+const { getUserId } = require("./utils");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -34,8 +37,36 @@ const avatarColors = [
 
 const resolvers = {
   Query: {
-    test(_, args, context) {
-      return "Hello World!!";
+    async getTeam(_, args, context) {
+      // 토근 검사 후 유저ID 가져오기
+      const userId = getUserId(context);
+      // 유저 찾기
+      console.log("userId", userId);
+      const user = await User.findById(userId);
+      console.log("user", user);
+      // 팀 찾기
+      return await Team.findById(user.team);
+    },
+    async getFolders(_, { parent }, context) {
+      const userId = getUserId(context);
+      if (parent) {
+        return await Folder.find({ parent });
+      } else {
+        const user = await User.findById(userId);
+        const groups = await Group.find({ users: ObjectId(userId) }, "_id");
+        const ids = groups
+          .map(o => o._id)
+          .concat(
+            ["External User", "Collaborator"].includes(user.role)
+              ? [ObjectId(userId)]
+              : [ObjectId(userId), user.team]
+          );
+        return await Folder.find({ "shareWith.item": ids }).populate("shareWith");
+      }
+    },
+    async getFolder(_, { id }, context) {
+      const userId = getUserId(context);
+      return await Folder.findById(id).populate("shareWith");
     }
   },
   Mutation: {
@@ -114,6 +145,6 @@ const resolvers = {
     parseValue: value => moment(value).toDate(), // value from the client
     serialize: value => value.getTime(), // value sent to the client
     parseLiteral: ast => ast
-  })
+  }),
 };
 module.exports = resolvers;
